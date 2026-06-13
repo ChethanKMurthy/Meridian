@@ -141,37 +141,7 @@ Each turn of the loop widens the gap a competitor starting today would have to c
 
 ---
 
-## Getting started
 
-```bash
-# 1. Install
-npm install
-
-# 2. Run
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000). The embedded database creates and seeds itself on first request, no external services required. Delete the `.pglite/` folder to reset to seed data.
-
-The **AI console** needs a free [Groq](https://console.groq.com) API key:
-
-```bash
-echo 'GROQ_API_KEY=gsk_...' > .env.local
-```
-
-It uses Groq's OpenAI-compatible API with `llama-3.3-70b-versatile` by default (override with `GROQ_MODEL`).
-
-Without a key, the Creators, Campaigns, and Trends pages still work fully, they query the engines directly.
-
-### Try in the console
-
-> Launch a new protein supplement in South India with a budget of ₹20L
-
-> I need ₹50L in revenue from a skincare campaign. Budget ₹15L. Who do I work with?
-
-> Where is consumer attention moving in fitness right now?
-
----
 
 ## Project structure
 
