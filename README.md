@@ -10,6 +10,11 @@
 </p>
 
 <p align="center">
+  <a href="https://meridian-eight-cyan.vercel.app"><b>Live demo &rarr; meridian-eight-cyan.vercel.app</b></a>
+</p>
+
+<p align="center">
+  <a href="https://meridian-eight-cyan.vercel.app"><img alt="Live demo" src="https://img.shields.io/badge/Live_demo-online-18b074?logo=vercel&logoColor=white" /></a>
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white" />
   <img alt="React" src="https://img.shields.io/badge/React-19-087EA4?logo=react&logoColor=white" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
@@ -23,8 +28,10 @@
 Meridian is not an influencer marketplace. It is the intelligence layer that decides **which creators generate revenue**, forecasts the return **before** a rupee is spent, and measures what actually happened afterward. Brands stop asking _"which influencer should I hire?"_ and start asking _"I need this much revenue next quarter, how?"_
 
 <p align="center">
-  <img src="docs/demo.gif" alt="Brand to creator to revenue, animated" width="80%" />
+  <a href="https://meridian-eight-cyan.vercel.app"><img src="docs/demo.gif" alt="Brand to creator to revenue, animated" width="80%" /></a>
 </p>
+
+<p align="center"><a href="https://meridian-eight-cyan.vercel.app"><b>Open the live demo</b></a></p>
 
 <p align="center"><i>Brand &rarr; Meridian data core &rarr; creator &rarr; attributed revenue. Every connection backed by data.</i></p>
 
