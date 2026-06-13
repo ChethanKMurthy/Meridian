@@ -103,8 +103,11 @@ CREATE TABLE IF NOT EXISTS graph_edges (
 const globalForDb = globalThis as unknown as { __dbPromise?: Promise<Db> };
 
 async function init(): Promise<Db> {
-  const dataDir = path.join(process.cwd(), ".pglite");
-  const pglite = new PGlite(dataDir);
+  // File-backed locally for fast restarts; in-memory in production/serverless,
+  // where the filesystem is read-only. The dataset is read-only seed data, so
+  // an in-memory DB reseeds identically on each cold start.
+  const persistent = process.env.NODE_ENV !== "production" && !process.env.VERCEL;
+  const pglite = persistent ? new PGlite(path.join(process.cwd(), ".pglite")) : new PGlite();
   await pglite.exec(DDL);
   const db = drizzle(pglite, { schema });
   const existing = await db.select({ id: schema.creators.id }).from(schema.creators).limit(1);

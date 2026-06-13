@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@electric-sql/pglite"],
+  // Ensure PGlite's WASM/data ship inside the serverless functions on Vercel.
+  outputFileTracingIncludes: {
+    "/**": [
+      "./node_modules/@electric-sql/pglite/dist/pglite.wasm",
+      "./node_modules/@electric-sql/pglite/dist/initdb.wasm",
+      "./node_modules/@electric-sql/pglite/dist/pglite.data",
+    ],
+  },
   // Allow opening the dev server from other devices on the local network
   // (e.g. a phone on the same Wi-Fi). Affects `next dev` only.
   allowedDevOrigins: ["192.168.1.4", "192.168.1.7", "192.168.1.0/24"],
