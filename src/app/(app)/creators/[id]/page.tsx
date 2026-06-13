@@ -61,7 +61,7 @@ export default async function CreatorPage({
             <h2 className="mb-3 text-[13px] font-semibold text-foreground">Social profiles</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {creator.platforms.map((p) => (
-                <SocialCard key={p.platform} creatorId={creator.id} p={p} />
+                <SocialCard key={p.platform} p={p} />
               ))}
             </div>
           </div>

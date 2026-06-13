@@ -1,7 +1,7 @@
 import type { PlatformPresence } from "./db/schema";
 
-// Build a public profile URL from a stored handle. Handles are seeded like
-// "@arjun_fit" (instagram) or "ArjunMehta" (youtube channel name).
+// Build a public profile URL from a stored handle (handles are stored with a
+// leading "@", e.g. "@beerbiceps").
 export function socialUrl(platform: PlatformPresence["platform"], handle: string): string {
   const clean = handle.replace(/^@/, "").trim();
   switch (platform) {
@@ -18,12 +18,10 @@ export function platformLabel(platform: PlatformPresence["platform"]): string {
   return platform === "x" ? "X" : platform === "youtube" ? "YouTube" : "Instagram";
 }
 
-// Deterministic placeholder thumbnails for a creator's recent posts. Seeded by
-// creator id + index so they stay stable across renders.
-export function postThumbs(seed: string, count = 3): string[] {
-  return Array.from({ length: count }, (_, i) => `https://picsum.photos/seed/${seed}-post-${i}/300/300`);
-}
-
-export function avatarUrl(seed: string): string {
-  return `https://picsum.photos/seed/${seed}-avatar/200/200`;
+// Real profile avatar via unavatar.io, which resolves a creator's actual social
+// avatar from their handle (and falls back to a generated avatar if missing).
+export function avatarUrl(platform: PlatformPresence["platform"], handle: string): string {
+  const clean = handle.replace(/^@/, "").trim();
+  const provider = platform === "youtube" ? "youtube" : platform === "x" ? "twitter" : "instagram";
+  return `https://unavatar.io/${provider}/${encodeURIComponent(clean)}?fallback=https://cdn.simpleicons.org/${provider === "twitter" ? "x" : provider}`;
 }

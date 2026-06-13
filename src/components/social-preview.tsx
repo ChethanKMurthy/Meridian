@@ -1,9 +1,8 @@
 import { ExternalLink } from "lucide-react";
 import type { PlatformPresence } from "@/lib/db/schema";
-import { socialUrl, platformLabel, postThumbs, avatarUrl } from "@/lib/social";
+import { socialUrl, platformLabel, avatarUrl } from "@/lib/social";
 import { formatCount } from "@/lib/format";
 
-// Real brand marks via Simple Icons (served as SVG images, brand-colored).
 const BRAND: Record<PlatformPresence["platform"], { slug: string; color: string; bg: string }> = {
   instagram: { slug: "instagram", color: "E4405F", bg: "linear-gradient(135deg,#fce4ec,#f3e5ff)" },
   youtube: { slug: "youtube", color: "FF0000", bg: "linear-gradient(135deg,#ffe9e9,#fff0f0)" },
@@ -13,6 +12,7 @@ const BRAND: Record<PlatformPresence["platform"], { slug: string; color: string;
 function BrandMark({ platform, size = 14 }: { platform: PlatformPresence["platform"]; size?: number }) {
   const b = BRAND[platform];
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={`https://cdn.simpleicons.org/${b.slug}/${b.color}`}
       width={size}
@@ -23,24 +23,38 @@ function BrandMark({ platform, size = 14 }: { platform: PlatformPresence["platfo
   );
 }
 
-/** Full profile preview card for one platform: header, stats, recent posts, link. */
-export function SocialCard({ creatorId, p }: { creatorId: string; p: PlatformPresence }) {
-  const url = socialUrl(p.platform, p.handle);
-  const thumbs = postThumbs(`${creatorId}-${p.platform}`);
+function Avatar({ p, size }: { p: PlatformPresence; size: number }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={avatarUrl(p.platform, p.handle)}
+      alt={p.handle}
+      width={size}
+      height={size}
+      className="rounded-full object-cover ring-2 ring-white"
+      style={{ width: size, height: size }}
+      loading="lazy"
+    />
+  );
+}
 
+/** Full profile preview card for one real platform: avatar, handle, stats, open link. */
+export function SocialCard({ p }: { p: PlatformPresence }) {
+  const url = socialUrl(p.platform, p.handle);
   return (
     <div className="card overflow-hidden">
       <div className="flex items-center gap-3 p-4" style={{ background: BRAND[p.platform].bg }}>
-        <img
-          src={avatarUrl(`${creatorId}-${p.platform}`)}
-          alt=""
-          className="h-11 w-11 rounded-full object-cover ring-2 ring-white"
-        />
+        <Avatar p={p} size={44} />
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 hover:underline"
+          >
             <BrandMark platform={p.platform} size={15} />
             <span className="truncate text-[13.5px] font-semibold">{p.handle}</span>
-          </div>
+          </a>
           <div className="text-[11.5px] text-muted">{platformLabel(p.platform)}</div>
         </div>
         <a
@@ -53,24 +67,16 @@ export function SocialCard({ creatorId, p }: { creatorId: string; p: PlatformPre
         </a>
       </div>
 
-      <div className="grid grid-cols-3 divide-x divide-edge border-y border-edge text-center">
+      <div className="grid grid-cols-3 divide-x divide-edge border-t border-edge text-center">
         {[
           ["Followers", formatCount(p.followers)],
           ["Avg views", formatCount(p.avgViews)],
           ["Engagement", `${p.engagementRate}%`],
         ].map(([k, v]) => (
-          <div key={k} className="px-2 py-2.5">
-            <div className="font-mono text-[14px] font-semibold">{v}</div>
+          <div key={k} className="px-2 py-3">
+            <div className="font-mono text-[15px] font-semibold">{v}</div>
             <div className="text-[10.5px] text-faint">{k}</div>
           </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-3 gap-1 p-1">
-        {thumbs.map((src, i) => (
-          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="group relative block aspect-square overflow-hidden">
-            <img src={src} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-          </a>
         ))}
       </div>
     </div>
@@ -97,54 +103,42 @@ export function SocialLinks({ platforms }: { platforms: PlatformPresence[] }) {
   );
 }
 
-/** Compact preview for the console: primary platform header + thumbnail strip + link. */
+/** Compact real-profile preview for the console: avatar, handle link, followers, open. */
 export function SocialPreviewMini({
-  creatorId,
   name,
   platforms,
 }: {
-  creatorId: string;
   name: string;
   platforms: PlatformPresence[];
 }) {
   const primary = [...platforms].sort((a, b) => b.followers - a.followers)[0];
   if (!primary) return null;
   const url = socialUrl(primary.platform, primary.handle);
-  const thumbs = postThumbs(`${creatorId}-${primary.platform}`, 4);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-edge bg-white">
-      <div className="flex items-center gap-2.5 px-3 py-2.5">
-        <img src={avatarUrl(`${creatorId}-${primary.platform}`)} alt="" className="h-8 w-8 rounded-full object-cover ring-1 ring-edge" />
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-[12.5px] font-semibold">{name}</div>
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-0.5 inline-flex items-center gap-1 text-[11.5px] text-muted hover:text-foreground"
-          >
-            <BrandMark platform={primary.platform} size={12} /> {primary.handle}
-          </a>
-        </div>
-        <span className="font-mono text-[11.5px] text-faint">{formatCount(primary.followers)}</span>
+    <div className="flex items-center gap-3 rounded-xl border border-edge bg-white px-3 py-2.5">
+      <Avatar p={primary} size={38} />
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-[12.5px] font-semibold">{name}</div>
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="grid h-7 w-7 place-items-center rounded-lg border border-edge text-muted transition-colors hover:text-accent"
-          aria-label={`Open ${name} on ${platformLabel(primary.platform)}`}
+          className="mt-0.5 inline-flex items-center gap-1 text-[11.5px] text-muted hover:text-foreground"
         >
-          <ExternalLink size={13} />
+          <BrandMark platform={primary.platform} size={12} /> {primary.handle}
         </a>
       </div>
-      <div className="grid grid-cols-4 gap-0.5">
-        {thumbs.map((src, i) => (
-          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="group relative block aspect-square overflow-hidden">
-            <img src={src} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-          </a>
-        ))}
-      </div>
+      <span className="font-mono text-[11.5px] text-faint">{formatCount(primary.followers)}</span>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="grid h-7 w-7 place-items-center rounded-lg border border-edge text-muted transition-colors hover:text-accent"
+        aria-label={`Open ${name} on ${platformLabel(primary.platform)}`}
+      >
+        <ExternalLink size={13} />
+      </a>
     </div>
   );
 }

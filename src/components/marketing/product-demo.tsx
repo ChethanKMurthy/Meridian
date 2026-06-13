@@ -10,10 +10,10 @@ gsap.registerPlugin(useGSAP);
 const QUERY = "Launch a protein supplement in South India, budget 20L";
 
 const ROWS = [
-  { name: "Arjun Mehta", niche: "fitness", match: 87, roas: "5.1x", fee: "6.5L" },
-  { name: "Rohit Deshpande", niche: "fitness", match: 83, roas: "6.3x", fee: "2.2L" },
-  { name: "Meghna Joshi", niche: "food", match: 66, roas: "3.1x", fee: "7.0L" },
-  { name: "Priya Nair", niche: "fitness", match: 64, roas: "2.4x", fee: "3.8L" },
+  { name: "Rohit Khatri", niche: "fitness", match: 87, roas: "6.3x", fee: "3.2L" },
+  { name: "Sanjyot Keer", niche: "food", match: 74, roas: "3.1x", fee: "7.0L" },
+  { name: "Ranveer Allahbadia", niche: "fitness", match: 71, roas: "2.7x", fee: "12L" },
+  { name: "Kabita Singh", niche: "food", match: 63, roas: "2.4x", fee: "6.0L" },
 ];
 
 const METRICS = [

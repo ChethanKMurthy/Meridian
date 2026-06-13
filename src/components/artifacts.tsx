@@ -110,12 +110,7 @@ function CreatorTable({ rows, recommended }: { rows: any[]; recommended: boolean
         <Box title="Profile previews">
           <div className="grid gap-2 p-2 sm:grid-cols-2">
             {previews.map((r) => (
-              <SocialPreviewMini
-                key={r.creatorId}
-                creatorId={r.creatorId}
-                name={r.name}
-                platforms={r.platforms as PlatformPresence[]}
-              />
+              <SocialPreviewMini key={r.creatorId} name={r.name} platforms={r.platforms as PlatformPresence[]} />
             ))}
           </div>
         </Box>
