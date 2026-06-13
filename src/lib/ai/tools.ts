@@ -1,4 +1,3 @@
-import type Anthropic from "@anthropic-ai/sdk";
 import { recommendCreators, searchCreators } from "../engines/recommendation";
 import { planCampaign } from "../engines/planner";
 import { predictCreatorCampaign, aggregateForecasts } from "../engines/prediction";
@@ -12,89 +11,113 @@ import { getDb } from "../db/client";
 import { creators, audiences } from "../db/schema";
 import { inArray } from "drizzle-orm";
 
-export const TOOLS: Anthropic.Tool[] = [
+// OpenAI-compatible function/tool definitions (Groq speaks the same dialect).
+type ToolDef = {
+  type: "function";
+  function: { name: string; description: string; parameters: Record<string, unknown> };
+};
+
+export const TOOLS: ToolDef[] = [
   {
-    name: "recommend_creators",
-    description:
-      "Rank creators for a product category and budget using the recommendation engine (category fit, audience fit, historical performance, quality, value). Call this when the user asks which creators to work with.",
-    input_schema: {
-      type: "object",
-      properties: {
-        category: { type: "string", description: "Product category, e.g. 'protein supplement', 'skincare', 'fintech app'" },
-        budget_inr: { type: "number", description: "Total campaign budget in INR" },
-        geo: { type: "string", description: "Target geography: a city or region like 'South India'" },
-        target_gender: { type: "string", enum: ["male", "female", "all"] },
-        price_inr: { type: "number", description: "Unit price of the product in INR, if known" },
-        limit: { type: "number", description: "Max creators to return (default 8)" },
+    type: "function",
+    function: {
+      name: "recommend_creators",
+      description:
+        "Rank creators for a product category and budget using the recommendation engine (category fit, audience fit, historical performance, quality, value). Call this when the user asks which creators to work with.",
+      parameters: {
+        type: "object",
+        properties: {
+          category: { type: "string", description: "Product category, e.g. 'protein supplement', 'skincare', 'fintech app'" },
+          budget_inr: { type: "number", description: "Total campaign budget in INR" },
+          geo: { type: "string", description: "Target geography: a city or region like 'South India'" },
+          target_gender: { type: "string", enum: ["male", "female", "all"] },
+          price_inr: { type: "number", description: "Unit price of the product in INR, if known" },
+          limit: { type: "number", description: "Max creators to return (default 8)" },
+        },
+        required: ["category", "budget_inr"],
       },
-      required: ["category", "budget_inr"],
     },
   },
   {
-    name: "plan_campaign",
-    description:
-      "Build a full campaign plan: creator lineup, budget allocation, aggregate forecast (reach/clicks/conversions/revenue/ROAS), goal coverage, and risks. Call this when the user gives a product + budget and wants a launch/campaign plan or has a revenue goal.",
-    input_schema: {
-      type: "object",
-      properties: {
-        category: { type: "string" },
-        budget_inr: { type: "number" },
-        revenue_goal_inr: { type: "number", description: "Revenue target in INR, if the user stated one" },
-        geo: { type: "string" },
-        target_gender: { type: "string", enum: ["male", "female", "all"] },
-        price_inr: { type: "number" },
+    type: "function",
+    function: {
+      name: "plan_campaign",
+      description:
+        "Build a full campaign plan: creator lineup, budget allocation, aggregate forecast (reach/clicks/conversions/revenue/ROAS), goal coverage, and risks. Call this when the user gives a product + budget and wants a launch/campaign plan or has a revenue goal.",
+      parameters: {
+        type: "object",
+        properties: {
+          category: { type: "string" },
+          budget_inr: { type: "number" },
+          revenue_goal_inr: { type: "number", description: "Revenue target in INR, if the user stated one" },
+          geo: { type: "string" },
+          target_gender: { type: "string", enum: ["male", "female", "all"] },
+          price_inr: { type: "number" },
+        },
+        required: ["category", "budget_inr"],
       },
-      required: ["category", "budget_inr"],
     },
   },
   {
-    name: "predict_campaign",
-    description:
-      "Forecast outcomes for a specific set of creators and a budget: reach, impressions, engagement, clicks, conversions, revenue, ROAS with confidence bands. Budget is split across creators proportional to their standard rates.",
-    input_schema: {
-      type: "object",
-      properties: {
-        creator_ids: { type: "array", items: { type: "string" }, description: "Creator IDs, e.g. from a prior recommendation" },
-        budget_inr: { type: "number" },
-        price_inr: { type: "number", description: "Unit price of the product in INR" },
+    type: "function",
+    function: {
+      name: "predict_campaign",
+      description:
+        "Forecast outcomes for a specific set of creators and a budget: reach, impressions, engagement, clicks, conversions, revenue, ROAS with confidence bands. Budget is split across creators proportional to their standard rates.",
+      parameters: {
+        type: "object",
+        properties: {
+          creator_ids: { type: "array", items: { type: "string" }, description: "Creator IDs, e.g. from a prior recommendation" },
+          budget_inr: { type: "number" },
+          price_inr: { type: "number", description: "Unit price of the product in INR" },
+        },
+        required: ["creator_ids", "budget_inr", "price_inr"],
       },
-      required: ["creator_ids", "budget_inr", "price_inr"],
     },
   },
   {
-    name: "search_creators",
-    description:
-      "Search the creator graph with filters (niche, geography, follower floor, fee ceiling, free-text query). Use for exploratory questions like 'which fitness creators do we have in Mumbai under ₹5L'.",
-    input_schema: {
-      type: "object",
-      properties: {
-        niche: { type: "string", description: "fitness | beauty | tech | food | finance | fashion | gaming | travel" },
-        geo: { type: "string" },
-        min_followers: { type: "number" },
-        max_fee_inr: { type: "number" },
-        query: { type: "string", description: "Free-text topic search, e.g. 'running shoes'" },
-        limit: { type: "number" },
+    type: "function",
+    function: {
+      name: "search_creators",
+      description:
+        "Search the creator graph with filters (niche, geography, follower floor, fee ceiling, free-text query). Use for exploratory questions like 'which fitness creators do we have in Mumbai under ₹5L'.",
+      parameters: {
+        type: "object",
+        properties: {
+          niche: { type: "string", description: "fitness | beauty | tech | food | finance | fashion | gaming | travel" },
+          geo: { type: "string" },
+          min_followers: { type: "number" },
+          max_fee_inr: { type: "number" },
+          query: { type: "string", description: "Free-text topic search, e.g. 'running shoes'" },
+          limit: { type: "number" },
+        },
+        required: [],
       },
-      required: [],
     },
   },
   {
-    name: "get_trends",
-    description:
-      "Get ranked market trend opportunities (velocity, growth, sentiment, momentum) with the creators best positioned to ride each trend. Call when the user asks what's trending or where attention is moving.",
-    input_schema: {
-      type: "object",
-      properties: {
-        category: { type: "string", description: "Optional filter: fitness | beauty | tech | food | finance | fashion" },
+    type: "function",
+    function: {
+      name: "get_trends",
+      description:
+        "Get ranked market trend opportunities (velocity, growth, sentiment, momentum) with the creators best positioned to ride each trend. Call when the user asks what's trending or where attention is moving.",
+      parameters: {
+        type: "object",
+        properties: {
+          category: { type: "string", description: "Optional filter: fitness | beauty | tech | food | finance | fashion" },
+        },
+        required: [],
       },
-      required: [],
     },
   },
   {
-    name: "get_campaign_performance",
-    description:
-      "Attribution data: past and active campaigns with predicted vs actual ROAS/revenue, per-creator realized track records, and platform-level forecast accuracy. Call for 'how did X perform', 'which creators actually drive revenue', or accuracy questions.",
-    input_schema: { type: "object", properties: {}, required: [] },
+    type: "function",
+    function: {
+      name: "get_campaign_performance",
+      description:
+        "Attribution data: past and active campaigns with predicted vs actual ROAS/revenue, per-creator realized track records, and platform-level forecast accuracy. Call for 'how did X perform', 'which creators actually drive revenue', or accuracy questions.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
   },
 ];
 

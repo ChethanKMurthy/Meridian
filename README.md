@@ -128,7 +128,7 @@ Each turn of the loop widens the gap a competitor starting today would have to c
 | Language | TypeScript |
 | Styling | Tailwind CSS v4, custom design tokens |
 | Data | Drizzle ORM over PGlite (embedded Postgres, zero setup) |
-| AI console | Anthropic API tool-use loop |
+| AI console | Groq (OpenAI-compatible) tool-use loop, free tier |
 | Motion | Motion (`motion/react`) and GSAP |
 | 3D | Three.js (WebGL creator graph) |
 
@@ -146,11 +146,13 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). The embedded database creates and seeds itself on first request, no external services required. Delete the `.pglite/` folder to reset to seed data.
 
-The **AI console** needs an Anthropic API key:
+The **AI console** needs a free [Groq](https://console.groq.com) API key:
 
 ```bash
-echo 'ANTHROPIC_API_KEY=sk-ant-...' > .env.local
+echo 'GROQ_API_KEY=gsk_...' > .env.local
 ```
+
+It uses Groq's OpenAI-compatible API with `llama-3.3-70b-versatile` by default (override with `GROQ_MODEL`).
 
 Without a key, the Creators, Campaigns, and Trends pages still work fully, they query the engines directly.
 
