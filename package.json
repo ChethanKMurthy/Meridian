@@ -1,0 +1,42 @@
+{
+  "name": "platform",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1",
+    "@electric-sql/pglite": "^0.5.2",
+    "@gsap/react": "^2.1.2",
+    "@neondatabase/serverless": "^1.1.0",
+    "better-auth": "^1.6.18",
+    "drizzle-orm": "^0.45.2",
+    "googleapis": "^173.0.0",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.18.0",
+    "motion": "^12.40.0",
+    "nanoid": "^5.1.11",
+    "next": "16.2.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "three": "^0.184.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20.19.43",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.184.1",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "tailwindcss": "^4",
+    "tsx": "^4.22.4",
+    "typescript": "^5"
+  }
+}

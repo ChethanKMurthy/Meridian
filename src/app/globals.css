@@ -1,0 +1,305 @@
+@import "tailwindcss";
+
+/*
+  Meridian design system — bright editorial light theme.
+  White canvas, electric blue primary, with pink and yellow as a playful
+  secondary palette. One radius scale: containers 1.25rem, controls 0.75rem,
+  buttons/pills full. Soft, tinted, Apple-grade shadows.
+*/
+:root {
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f6fc;
+  --surface-3: #e9edf9;
+  --border: #e9ebf3;
+  --border-strong: #d8dcec;
+  --foreground: #0d0e15;
+  --muted: #565d72;
+  --faint: #969cb1;
+
+  --accent: #2f6bff;        /* electric blue, primary */
+  --accent-2: #6f9bff;
+  --accent-ink: #ffffff;    /* text on blue */
+  --accent-soft: #e7eeff;
+  --accent-dim: #cdd9ff;    /* selection */
+
+  --blue: #2f6bff;
+  --pink: #ff4f8b;
+  --yellow: #ffc736;
+  --violet: #8b6cff;
+
+  --positive: #18b074;
+  --negative: #f0506a;
+  --info: #2f6bff;
+
+  --shadow-sm: 0 1px 2px rgba(20, 28, 60, 0.06), 0 4px 12px -6px rgba(20, 28, 60, 0.1);
+  --shadow-card: 0 1px 2px rgba(20, 28, 60, 0.05), 0 18px 44px -22px rgba(28, 40, 90, 0.22);
+  --shadow-float: 0 30px 80px -32px rgba(28, 40, 90, 0.32);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-edge: var(--border);
+  --color-edge-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-dim: var(--accent-dim);
+  --color-blue: var(--blue);
+  --color-pink: var(--pink);
+  --color-yellow: var(--yellow);
+  --color-violet: var(--violet);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-info: var(--info);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-outfit);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: var(--foreground);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1;
+  padding: 0.7rem 1.3rem;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+  outline: none;
+}
+.btn:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px color-mix(in oklab, var(--accent) 55%, transparent);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 8px 22px -10px color-mix(in oklab, var(--accent) 80%, transparent);
+}
+.btn-primary:hover {
+  background: color-mix(in oklab, var(--accent) 92%, black);
+  box-shadow: 0 12px 30px -10px color-mix(in oklab, var(--accent) 85%, transparent);
+}
+
+.btn-gradient {
+  color: #fff;
+  background: linear-gradient(110deg, var(--blue), var(--violet) 48%, var(--pink));
+  background-size: 160% 160%;
+  box-shadow: 0 12px 30px -12px color-mix(in oklab, var(--violet) 75%, transparent);
+  animation: gradientPan 8s ease infinite;
+}
+.btn-gradient:hover {
+  box-shadow: 0 16px 38px -12px color-mix(in oklab, var(--pink) 70%, transparent);
+}
+
+.btn-ghost {
+  background: #fff;
+  color: var(--foreground);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-quiet {
+  background: transparent;
+  color: var(--muted);
+}
+.btn-quiet:hover {
+  color: var(--foreground);
+  background: var(--surface-2);
+}
+
+.btn-lg {
+  font-size: 0.95rem;
+  padding: 0.9rem 1.7rem;
+}
+.btn-sm {
+  font-size: 0.8125rem;
+  padding: 0.5rem 1rem;
+}
+
+/* ---------- Surfaces ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+.card-interactive {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-interactive:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-float);
+  transform: translateY(-3px);
+}
+
+/* ---------- Text + gradient ---------- */
+
+.grad-text {
+  background: linear-gradient(105deg, var(--blue), var(--violet) 46%, var(--pink) 78%, var(--yellow));
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientPan 9s ease infinite;
+}
+
+.grad-mesh {
+  background:
+    radial-gradient(42% 50% at 12% 18%, color-mix(in oklab, var(--blue) 26%, transparent), transparent 70%),
+    radial-gradient(40% 48% at 88% 14%, color-mix(in oklab, var(--pink) 24%, transparent), transparent 70%),
+    radial-gradient(46% 52% at 72% 88%, color-mix(in oklab, var(--yellow) 26%, transparent), transparent 70%),
+    radial-gradient(40% 46% at 26% 86%, color-mix(in oklab, var(--violet) 22%, transparent), transparent 70%);
+}
+
+/* Soft pastel ambient wash for section/console backgrounds */
+.ambient {
+  background:
+    radial-gradient(50% 50% at 50% 0%, color-mix(in oklab, var(--blue) 16%, transparent), transparent 72%),
+    radial-gradient(42% 50% at 86% 26%, color-mix(in oklab, var(--pink) 14%, transparent), transparent 72%),
+    radial-gradient(42% 46% at 10% 80%, color-mix(in oklab, var(--yellow) 16%, transparent), transparent 72%);
+}
+
+/* ---------- Glass (light) ---------- */
+
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ---------- 3D scene ---------- */
+
+.scene {
+  perspective: 1400px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes gradientPan {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.float-slow { animation: floatY 7s ease-in-out infinite; }
+.float-mid { animation: floatY 5.5s ease-in-out infinite; }
+.float-fast { animation: floatY 4.5s ease-in-out infinite; }
+
+@keyframes spinSlow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spinSlow 26s linear infinite; }
+.spin-slower { animation: spinSlow 44s linear infinite; }
+
+@keyframes flowDash {
+  to { stroke-dashoffset: -1000; }
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(0.6); opacity: 0.55; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.pulse-dot { animation: pulse-dot 1.4s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 40s linear infinite; }
+
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .pulse-dot,
+  .grad-text,
+  .btn-gradient,
+  .float-slow,
+  .float-mid,
+  .float-fast,
+  .spin-slow,
+  .spin-slower {
+    animation: none !important;
+  }
+}
